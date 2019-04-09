@@ -36,6 +36,8 @@
 
 erros = zeros(1,21);
 acertos = zeros(1,21);
+taxaDeAcertos = zeros(1,21);
+erroQuadratico = zeros(1,21);
 j=1;
 while j<=21
     
@@ -54,8 +56,12 @@ while j<=21
         else
             erros(j) = erros(j) + 1;
         end
+        
         i = i + 1;
     end
+    
+    erroQuadratico(j) = erros(j);
+    taxaDeAcertos(j) = acertos(j)/(acertos(j)+erros(j));
     j = j +1;
 end
 
