@@ -9,7 +9,7 @@ lambda=1;
 % Temos 21 matrizes W (uma para cada coeficiente de regularizacao, todas de
 % 784x10 elementos.
 W = zeros(784, 10, 21);
-% O vetor de bias que sera concatenado na matriz X e W para nao sei o que.
+% O vetor de bias que sera concatenado
 vetorExtraDe1 = ones(60000,1);
 
 %==========CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO=============
