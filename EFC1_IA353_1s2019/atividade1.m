@@ -8,9 +8,12 @@ load('data.mat');
 lambda=1;
 % Temos 21 matrizes W (uma para cada coeficiente de regularizacao, todas de
 % 784x10 elementos.
-W = zeros(784, 10, 21);
+W = zeros(785, 10, 21);
 % O vetor de bias que sera concatenado na matriz X e W para nao sei o que.
 vetorExtraDe1 = ones(60000,1);
+
+% Concatenando
+X = [vetorExtraDe1, X];
 
 %==========CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO=============
 
@@ -22,15 +25,33 @@ while i < 21
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
-    W(:,:, i+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(784))^-1)*X(1:40000,:)'*S(1:40000,:);
+    W(:,:, i+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
     
     i = i+1;    
 end
 
-% W = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(784))^-1)*X(1:40000,:)'*S(1:40000,:);
+% W = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
 
 %==========FIM DO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO======
 
+erros = 0;
+acertos = 0;
+i = 40000 + 1;
+while i<=60000
+    
+    resultadoClassificacao = W(:,:,12)'*X(i,:)';
+    
+    [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
+    [~, indiceMaxS] = max(S(i,:));
+    
+    if indiceMaxS == indiceMaxResuladoClassificacao
+        acertos = acertos + 1;
+    else
+        erros = erros + 1;
+    end
+    
+    i = i + 1;
+    
+end
 
-
-% W(:,:,1)'*X(1,:)';
+% W(:,:,1)'*X(1,:)'
