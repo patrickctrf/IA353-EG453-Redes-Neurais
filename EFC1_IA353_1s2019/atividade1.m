@@ -82,6 +82,10 @@ while j<=21
         i = i + 1;
     end
     
+    % Estavamos somando para as 20000 amostras de validacao. Agora,
+    % dividimos para ter a media.
+    erroQuadraticoNormal(j) = erroQuadraticoNormal(j)/20000;
+    
     taxaDeAcertosNormal(j) = acertos(j)/(acertos(j)+erros(j));
     j = j +1;
 end
@@ -171,6 +175,9 @@ while j<=21
         i = i + 1;
     end
     
+    % Estavamos somando para as 20000 amostras de validacao. Agora,
+    % dividimos para ter a media.
+    erroQuadratico(j) = erroQuadratico(j)/20000;
     
     taxaDeAcertos(j) = acertos(j)/(acertos(j)+erros(j));
     j = j +1;
@@ -187,7 +194,7 @@ end
 W_refinado = zeros(785, 10, 21);
 
 % O vetor que guarda os valores dos lambdas usados
-lambdasRefinadosSegundo = zeros(1,21);
+lambdasRefinadosTaxaDeAcertos = zeros(1,21);
 
 % Faremos uma varredura em torno do minimo encontrado. Escolheremos o valor
 % do coeficiente anterior a aquele que produziu o melhor resultado e iremos
@@ -206,7 +213,7 @@ while j < 21
     
     % Multiplicamos lambda por 2^0.2 a cada iteracao.
     lambda = 2^(i*2-14 + j*0.2)
-    lambdasRefinadosSegundo(j+1) = lambda;
+    lambdasRefinadosTaxaDeAcertos(j+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
@@ -285,4 +292,36 @@ fclose(fileID);
 % ylabel('cos(5x)')
 
 
+figure(1);
 
+semilogx(lambdasNormais, erroQuadraticoNormal);
+
+title('Sem Refinamento');
+xlabel('Coeficiente de Regularização');
+ylabel('Erro Quadrático Médio');
+
+figure(2);
+
+semilogx(lambdasNormais, taxaDeAcertosNormal);
+
+title('Sem Refinamento');
+xlabel('Coeficiente de Regularização');
+ylabel('Taxa de Acertos');
+
+
+
+figure(3);
+
+semilogx(lambdasRefinadosTaxaDeAcertos, taxaDeAcertos);
+
+title('Com Refinamento');
+xlabel('Coeficiente de Regularização');
+ylabel('Taxa de Acertos');
+
+figure(4);
+
+semilogx(lambdasRefinados, erroQuadratico);
+
+title('Com Refinamento');
+xlabel('Coeficiente de Regularização');
+ylabel('Erro Quadrático Médio');
