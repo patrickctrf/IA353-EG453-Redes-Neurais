@@ -186,14 +186,21 @@ end
 [~,melhorResultadoErroQuadratico ] = min(erroQuadratico);
 [~,melhorResultadoTaxaDeAcertos ] = max(taxaDeAcertos);
 
-dlmwrite('n175480.txt', W(:,:,melhorResultadoTaxaDeAcertosNormal), 'precision','%14.10f');
+
+% Calculando a matriz de classificadores W definitiva, agora apenas com o
+% melhor coeficiente de regularizacao Lambda encontrado e com todas as
+% 60000 amostras de treinamento.
+lambda = 2^((melhorResultadoErroQuadratico-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
+W_final(:,:, j+1) = ((X'*X+lambda*eye(785))^-1)*X'*S;
+
+dlmwrite('n175480.txt', W_final, 'precision','%17.15f');
 
 fileID = fopen('p175480.txt','w');
 fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
 fclose(fileID);
 
 fileID = fopen('Q1_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fprintf(fileID, '%f\n%f\n', lambda, lambdasNormais(melhorResultadoTaxaDeAcertosNormal));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
 % semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
