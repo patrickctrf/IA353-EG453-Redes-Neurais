@@ -24,7 +24,7 @@ i=0;
 while i < 21
     
     % Multiplicamos lambda por 4 == 2^2, a cada iteracao.
-    lambda = 2^(i*2-14)
+    lambda = 2^(i*2-10)
     lambdasNormais(i+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
@@ -60,8 +60,8 @@ while j<=21
     i = 40000 + 1;
     while i<=60000
         
-        % Pegamos a matriz W daquele LAMDA e multiplicamos para cada
-        % entrada de X (uma de cada vez, de acordo com "i"). 
+        % Pegamos a matriz W daquele LAMDA e multiplicamos para todas as
+        % entradas de X (uma de cada vez, de acordo com "i"). 
         resultadoClassificacao = W(:,:,j)'*X(i,:)';
     
         % Verificamos se o resultado da ultima entrada de X foi correto.
@@ -76,12 +76,13 @@ while j<=21
         
         % O erro quadratico medio eh a distancia ao quadrado media entre
         % cada item (dimensao) da saida do classificador e o respectivo
-        % VETOR de referencia na MATRIZ "S".
+        % VETOR de referencia na MATRIZ S.
         erroQuadraticoNormal(j) = erroQuadraticoNormal(j) + mean((resultadoClassificacao-S(i,:)').^2);
         
         i = i + 1;
     end
     
+    % erroQuadraticoNormal(j) = mean(erros(j).^2);
     taxaDeAcertosNormal(j) = acertos(j)/(acertos(j)+erros(j));
     j = j +1;
 end
@@ -112,7 +113,7 @@ lambdasRefinados = zeros(1,21);
 % do coeficiente anterior a aquele que produziu o melhor resultado e iremos
 % avancando de 2^0.2, multiplicativamente, ate alcancar o coeficiente de
 % classificacao seguinte ao de melhor resultado.
-i = melhorResultadoErroQuadraticoNormal - 1 -1;% Lembre que o "i" comecava em zero
+i = melhorResultadoTaxaDeAcertosNormal - 1 -1;% Lembre que o "i" comecava em zero
                                         % na primeira varredura, entao
                                         % devemos descontar "-1" novamente,
                                         % pois os indices dos vetores em
@@ -124,7 +125,7 @@ j=0;
 while j < 21
     
     % Multiplicamos lambda por 2^0.2 a cada iteracao.
-    lambda = 2^(i*2-14 + j*0.2)
+    lambda = 2^(i*2-10 + j*0.2)
     lambdasRefinados(j+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
@@ -143,24 +144,16 @@ erros = zeros(1,21);
 acertos = zeros(1,21);
 taxaDeAcertos = zeros(1,21);
 erroQuadratico = zeros(1,21);
-
-% Iterando sobre os diferentes LAMBDAS. Cada "j" acessa a matriz W gerada
-% por um diferente LAMBDA.
 j=1;
 while j<=21
     
     erros(j) = 0;
     acertos(j) = 0;
-    
-    % Iterando sobre as diferentes entradas  de X.
     i = 40000 + 1;
     while i<=60000
 
-        % Pegamos a matriz W daquele LAMBDA e multiplicamos para cada
-        % entrada de X (uma de cada vez, de acordo com "i"). 
         resultadoClassificacao = W_refinado(:,:,j)'*X(i,:)';
-        
-        % Verificamos se o resultado da ultima entrada de X foi correto.
+
         [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
         [~, indiceMaxS] = max(S(i,:));
 
@@ -170,15 +163,10 @@ while j<=21
             erros(j) = erros(j) + 1;
         end
         
-        % O erro quadratico medio eh a distancia ao quadrado media entre
-        % cada item (dimensao) da saida do classificador e o respectivo
-        % VETOR de referencia na MATRIZ "S".
-        erroQuadratico(j) = erroQuadratico(j) + mean((resultadoClassificacao-S(i,:)').^2);
-        
         i = i + 1;
     end
     
-    
+    erroQuadratico(j) = erros(j)^2;
     taxaDeAcertos(j) = acertos(j)/(acertos(j)+erros(j));
     j = j +1;
 end
@@ -189,7 +177,7 @@ end
 dlmwrite('n175480.txt', W(:,:,melhorResultadoTaxaDeAcertosNormal), 'precision','%14.10f');
 
 fileID = fopen('p175480.txt','w');
-fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
+fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
 fileID = fopen('Q1_175480.txt','w');
