@@ -137,7 +137,89 @@ end
 
 
 
-%=============TAXAS DE ERROS E ACERTOS=====================================
+%=============BUSCA REFINADA ERRO QUADRADTICO MEDIO========================
+
+erros = zeros(1,21);
+acertos = zeros(1,21);
+taxaDeAcertos = zeros(1,21);
+erroQuadratico = zeros(1,21);
+
+% Iterando sobre os diferentes LAMBDAS. Cada "j" acessa a matriz W gerada
+% por um diferente LAMBDA.
+j=1;
+while j<=21
+    
+    erros(j) = 0;
+    acertos(j) = 0;
+    
+    % Iterando sobre as diferentes entradas  de X.
+    i = 40000 + 1;
+    while i<=60000
+
+        % Pegamos a matriz W daquele LAMBDA e multiplicamos para cada
+        % entrada de X (uma de cada vez, de acordo com "i"). 
+        resultadoClassificacao = W_refinado(:,:,j)'*X(i,:)';
+        
+        % Verificamos se o resultado da ultima entrada de X foi correto.
+        [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
+        [~, indiceMaxS] = max(S(i,:));
+        
+        % O erro quadratico medio eh a distancia ao quadrado media entre
+        % cada item (dimensao) da saida do classificador e o respectivo
+        % VETOR de referencia na MATRIZ "S".
+        erroQuadratico(j) = erroQuadratico(j) + mean((resultadoClassificacao-S(i,:)').^2);
+        
+        i = i + 1;
+    end
+    
+    
+    taxaDeAcertos(j) = acertos(j)/(acertos(j)+erros(j));
+    j = j +1;
+end
+
+[~,melhorResultadoErroQuadratico ] = min(erroQuadratico);
+
+%=============FIM BUSCA REFINADA ERRO QUADRADTICO MEDIO====================
+
+
+
+%==========REFINADO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO====
+
+W_refinado = zeros(785, 10, 21);
+
+% O vetor que guarda os valores dos lambdas usados
+lambdasRefinadosSegundo = zeros(1,21);
+
+% Faremos uma varredura em torno do minimo encontrado. Escolheremos o valor
+% do coeficiente anterior a aquele que produziu o melhor resultado e iremos
+% avancando de 2^0.2, multiplicativamente, ate alcancar o coeficiente de
+% classificacao seguinte ao de melhor resultado.
+i = melhorResultadoTaxaDeAcertosNormal - 1 -1;% Lembre que o "i" comecava em zero
+                                        % na primeira varredura, entao
+                                        % devemos descontar "-1" novamente,
+                                        % pois os indices dos vetores em
+                                        % matlab comecam em "1" (nao "0") e
+                                        % queremos deixar centrado no meio
+                                        % o coeficiente que gerou o melhor
+                                        % resultado antes de refinar.
+j=0;
+while j < 21
+    
+    % Multiplicamos lambda por 2^0.2 a cada iteracao.
+    lambda = 2^(i*2-14 + j*0.2)
+    lambdasRefinadosSegundo(j+1) = lambda;
+    
+    % A equacao utilizada para realizar os minimos quadrados eh dada e
+    % explicada no roteiro.
+    W_refinado(:,:, j+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
+    
+    j = j+1;
+end
+%===FIM DO REFINADO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO====
+
+
+
+%=============BUSCA REFINADA TAXA DE ACERTOS===============================
 
 erros = zeros(1,21);
 acertos = zeros(1,21);
@@ -170,11 +252,6 @@ while j<=21
             erros(j) = erros(j) + 1;
         end
         
-        % O erro quadratico medio eh a distancia ao quadrado media entre
-        % cada item (dimensao) da saida do classificador e o respectivo
-        % VETOR de referencia na MATRIZ "S".
-        erroQuadratico(j) = erroQuadratico(j) + mean((resultadoClassificacao-S(i,:)').^2);
-        
         i = i + 1;
     end
     
@@ -183,24 +260,24 @@ while j<=21
     j = j +1;
 end
 
-[~,melhorResultadoErroQuadratico ] = min(erroQuadratico);
 [~,melhorResultadoTaxaDeAcertos ] = max(taxaDeAcertos);
 
+%=============FIM BUSCA REFINADA TAXA DE ACERTOS===========================
 
 % Calculando a matriz de classificadores W definitiva, agora apenas com o
 % melhor coeficiente de regularizacao Lambda encontrado e com todas as
 % 60000 amostras de treinamento.
-lambda = 2^((melhorResultadoErroQuadratico-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
-W_final(:,:, j+1) = ((X'*X+lambda*eye(785))^-1)*X'*S;
+lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
+W_final = ((X'*X+lambda*eye(785))^-1)*X'*S;
 
-dlmwrite('n175480.txt', W_final, 'precision','%17.15f');
+dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
 
 fileID = fopen('p175480.txt','w');
 fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
 fclose(fileID);
 
 fileID = fopen('Q1_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambda, lambdasNormais(melhorResultadoTaxaDeAcertosNormal));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
 % semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
@@ -209,5 +286,5 @@ fclose(fileID);
 % xlabel('x')
 % ylabel('cos(5x)')
 
-%=============FIM DE TAXAS DE ERROS E ACERTOS==============================
+
 
