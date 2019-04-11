@@ -48,8 +48,7 @@ acertos = zeros(1,21);
 taxaDeAcertosNormal = zeros(1,21);
 erroQuadraticoNormal = zeros(1,21);
 
-% Iterando sobre os diferentes LAMBDAS. Cada "j" acessa a matriz W gerada
-% por um diferente LAMBDA.
+% Iterando sobre os diferentes LAMBDAS.
 j=1;
 while j<=21
     
