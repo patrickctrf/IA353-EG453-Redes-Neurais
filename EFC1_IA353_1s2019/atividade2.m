@@ -1,19 +1,38 @@
+% W: 500x10
+% X: 60000x785
+% V: 500x785    Montado aleatoriamente
+% H: 60000x500
+% f() = tanh()
+
+% f(VxX') = H
+% Saida = HxW
+
 clear all;
 
 % Carrega as matrizes X e S (Y, no roteiro) de entrada.
 load('data.mat');
+% Carrega a semente, seed (s), do gerador aleatorio.
+load('seed.mat');
 
 % O coeficiente de regularizacao, que varia de 2^-10 a 2^+10 com incremento
 % multiplicativo de 2^2.
 lambda=1;
 % Temos 21 matrizes W (uma para cada coeficiente de regularizacao, todas de
-% 784x10 elementos.
-W = zeros(785, 10, 21);
+% 500x10 elementos.
+W = zeros(501, 10, 21);
 % O vetor de bias que sera concatenado na matriz X e W para nao sei o que.
 vetorExtraDe1 = ones(60000,1);
 
 % Concatenando
 X = [vetorExtraDe1, X];
+
+% Ganhos iniciais para as entradas dos neuronios.
+rng(s);
+V = 0.2.*randn(500, 785);
+
+% Matriz responsavel por armazenar as saidas dos neuronios.
+H = tanh(X*V');
+H = [vetorExtraDe1, H];
 
 % O vetor que guarda os valores dos lambdas usados
 lambdasNormais = zeros(1,21);
@@ -24,17 +43,17 @@ i=0;
 while i < 21
     
     % Multiplicamos lambda por 4 == 2^2, a cada iteracao.
-    lambda = 2^(i*2-14)
+    lambda = 2^(i*2-18)
     lambdasNormais(i+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
-    W(:,:, i+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
+    W(:,:, i+1) = ((H(1:40000,:)'*H(1:40000,:)+lambda*eye(501))^-1)*H(1:40000,:)'*S(1:40000,:);
     
     i = i+1;    
 end
 
-% W = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
+% W = ((H(1:40000,:)'*H(1:40000,:)+lambda*eye(501))^-1)*H(1:40000,:)'*S(1:40000,:);
 
 %==========FIM DO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO======
 
@@ -62,9 +81,9 @@ while j<=21
         
         % Pegamos a matriz W daquele LAMDA e multiplicamos para cada
         % entrada de X (uma de cada vez, de acordo com "i"). 
-        resultadoClassificacao = W(:,:,j)'*X(i,:)';
+        resultadoClassificacao = W(:,:,j)'*H(i,:)';
     
-        % Verificamos se o resultado da ultima entrada de X foi correto.
+        % Verificamos se o resultado da ultima entrada de H foi correto.
         [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
         [~, indiceMaxS] = max(S(i,:));
 
@@ -103,7 +122,7 @@ end
 
 %==========REFINADO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO====
 
-W_refinado = zeros(785, 10, 21);
+W_refinado = zeros(501, 10, 21);
 
 % O vetor que guarda os valores dos lambdas usados
 lambdasRefinados = zeros(1,21);
@@ -124,12 +143,12 @@ j=0;
 while j < 21
     
     % Multiplicamos lambda por 2^0.2 a cada iteracao.
-    lambda = 2^(i*2-14 + j*0.2)
+    lambda = 2^(i*2-18 + j*0.2)
     lambdasRefinados(j+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
-    W_refinado(:,:, j+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
+    W_refinado(:,:, j+1) = ((H(1:40000,:)'*H(1:40000,:)+lambda*eye(501))^-1)*H(1:40000,:)'*S(1:40000,:);
     
     j = j+1;
 end
@@ -151,15 +170,15 @@ while j<=21
     erros(j) = 0;
     acertos(j) = 0;
     
-    % Iterando sobre as diferentes entradas  de X.
+    % Iterando sobre as diferentes entradas  de H.
     i = 40000 + 1;
     while i<=60000
 
         % Pegamos a matriz W daquele LAMBDA e multiplicamos para cada
-        % entrada de X (uma de cada vez, de acordo com "i"). 
-        resultadoClassificacao = W_refinado(:,:,j)'*X(i,:)';
+        % entrada de H (uma de cada vez, de acordo com "i"). 
+        resultadoClassificacao = W_refinado(:,:,j)'*H(i,:)';
         
-        % Verificamos se o resultado da ultima entrada de X foi correto.
+        % Verificamos se o resultado da ultima entrada de H foi correto.
         [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
         [~, indiceMaxS] = max(S(i,:));
         
@@ -184,7 +203,7 @@ end
 
 %==========REFINADO CALCULANDO W PARA CADA COEFICIENTE DE REGULARIZACAO====
 
-W_refinado = zeros(785, 10, 21);
+W_refinado = zeros(501, 10, 21);
 
 % O vetor que guarda os valores dos lambdas usados
 lambdasRefinadosSegundo = zeros(1,21);
@@ -205,12 +224,12 @@ j=0;
 while j < 21
     
     % Multiplicamos lambda por 2^0.2 a cada iteracao.
-    lambda = 2^(i*2-14 + j*0.2)
+    lambda = 2^(i*2-18 + j*0.2)
     lambdasRefinadosSegundo(j+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
-    W_refinado(:,:, j+1) = ((X(1:40000,:)'*X(1:40000,:)+lambda*eye(785))^-1)*X(1:40000,:)'*S(1:40000,:);
+    W_refinado(:,:, j+1) = ((H(1:40000,:)'*H(1:40000,:)+lambda*eye(501))^-1)*H(1:40000,:)'*S(1:40000,:);
     
     j = j+1;
 end
@@ -232,15 +251,15 @@ while j<=21
     erros(j) = 0;
     acertos(j) = 0;
     
-    % Iterando sobre as diferentes entradas  de X.
+    % Iterando sobre as diferentes entradas  de H.
     i = 40000 + 1;
     while i<=60000
 
         % Pegamos a matriz W daquele LAMBDA e multiplicamos para cada
-        % entrada de X (uma de cada vez, de acordo com "i"). 
-        resultadoClassificacao = W_refinado(:,:,j)'*X(i,:)';
+        % entrada de H (uma de cada vez, de acordo com "i"). 
+        resultadoClassificacao = W_refinado(:,:,j)'*H(i,:)';
         
-        % Verificamos se o resultado da ultima entrada de X foi correto.
+        % Verificamos se o resultado da ultima entrada de H foi correto.
         [~, indiceMaxResuladoClassificacao] = max(resultadoClassificacao);
         [~, indiceMaxS] = max(S(i,:));
 
@@ -265,17 +284,17 @@ end
 % Calculando a matriz de classificadores W definitiva, agora apenas com o
 % melhor coeficiente de regularizacao Lambda encontrado e com todas as
 % 60000 amostras de treinamento.
-lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
-W_final = ((X'*X+lambda*eye(785))^-1)*X'*S;
+lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-18 + (melhorResultadoErroQuadratico-1)*0.2);
+W_final = ((H'*H+lambda*eye(501))^-1)*H'*S;
 
-dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
+% dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
+% 
+% fileID = fopen('p175480.txt','w');
+% fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
+% fclose(fileID);
 
-fileID = fopen('p175480.txt','w');
-fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
-fclose(fileID);
-
-fileID = fopen('Q1_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fileID = fopen('Q2_175480.txt','w');
+fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-18 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
 % semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
