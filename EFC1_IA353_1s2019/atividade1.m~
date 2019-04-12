@@ -194,7 +194,7 @@ end
 W_refinado = zeros(785, 10, 21);
 
 % O vetor que guarda os valores dos lambdas usados
-lambdasRefinadosSegundo = zeros(1,21);
+lambdasRefinadosTaxaDeAcertos = zeros(1,21);
 
 % Faremos uma varredura em torno do minimo encontrado. Escolheremos o valor
 % do coeficiente anterior a aquele que produziu o melhor resultado e iremos
@@ -213,7 +213,7 @@ while j < 21
     
     % Multiplicamos lambda por 2^0.2 a cada iteracao.
     lambda = 2^(i*2-14 + j*0.2)
-    lambdasRefinadosSegundo(j+1) = lambda;
+    lambdasRefinadosTaxaDeAcertos(j+1) = lambda;
     
     % A equacao utilizada para realizar os minimos quadrados eh dada e
     % explicada no roteiro.
@@ -272,24 +272,20 @@ end
 % Calculando a matriz de classificadores W definitiva, agora apenas com o
 % melhor coeficiente de regularizacao Lambda encontrado e com todas as
 % 60000 amostras de treinamento.
-lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
-W_final = ((X'*X+lambda*eye(785))^-1)*X'*S;
+lambdaErroQuad = 2^((melhorResultadoErroQuadraticoNormal-1-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
+lambdaTaxaAcertos = 2^((melhorResultadoTaxaDeAcertosNormal-1-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2);
+W_final = ((X'*X+lambdaTaxaAcertos*eye(785))^-1)*X'*S;
 
-dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
+dlmwrite('n175480.txt', W_final, 'precision','%30.26f');
 
 fileID = fopen('p175480.txt','w');
-fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
+fprintf(fileID, '%f\n', lambdaTaxaAcertos);
 fclose(fileID);
 
 fileID = fopen('Q1_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fprintf(fileID, 'ErroQuad: %30.26f\nTaxaAcertos: %30.26f\n', lambdaErroQuad, lambdaTaxaAcertos);% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
-% semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
-% 
-% title('2-D Line Plot')
-% xlabel('x')
-% ylabel('cos(5x)')
 
 
 figure(1);
@@ -310,18 +306,33 @@ ylabel('Taxa de Acertos');
 
 
 
-figure(1);
+figure(3);
 
-semilogx(lambdasNormais, erroQuadraticoNormal);
+semilogx(lambdasRefinadosTaxaDeAcertos, taxaDeAcertos);
 
-title('Sem Refinamento');
+title('Com Refinamento');
+xlabel('Coeficiente de Regularização');
+ylabel('Taxa de Acertos');
+
+figure(4);
+
+semilogx(lambdasRefinados, erroQuadratico);
+
+title('Com Refinamento');
 xlabel('Coeficiente de Regularização');
 ylabel('Erro Quadrático Médio');
 
-figure(2);
 
-semilogx(lambdasNormais, taxaDeAcertosNormal);
 
-title('Sem Refinamento');
-xlabel('Coeficiente de Regularização');
-ylabel('Taxa de Acertos');
+classificadoresVisuais = zeros(28,28,10);
+for i = 1:10
+    for j = 1:28
+        for k = 1:28
+            classificadoresVisuais(k,j,i) = W_final(k+(j-1)*28+1, i);
+        end
+    end
+    figure(i+4);
+    pcolor(1:28,1:28,classificadoresVisuais(:,:);
+    colorbar;
+    title(num2str(i));
+end

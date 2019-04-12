@@ -286,11 +286,6 @@ fileID = fopen('Q1_175480.txt','w');
 fprintf(fileID, 'ErroQuad: %30.26f\nTaxaAcertos: %30.26f\n', lambdaErroQuad, lambdaTaxaAcertos);% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
-% semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
-% 
-% title('2-D Line Plot')
-% xlabel('x')
-% ylabel('cos(5x)')
 
 
 figure(1);
@@ -326,3 +321,18 @@ semilogx(lambdasRefinados, erroQuadratico);
 title('Com Refinamento');
 xlabel('Coeficiente de Regularização');
 ylabel('Erro Quadrático Médio');
+
+
+
+classificadoresVisuais = zeros(28,28,10);
+for i = 1:10
+    for j = 1:28
+        for k = 1:28
+            classificadoresVisuais(k,j,i) = W_final(k+(j-1)*28+1, i);
+        end
+    end
+    figure(i+4);
+    pcolor(1:28,1:28,classificadoresVisuais(:,:,i));
+    colorbar;
+    title(num2str(i));
+end
