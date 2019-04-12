@@ -291,24 +291,14 @@ end
 % Calculando a matriz de classificadores W definitiva, agora apenas com o
 % melhor coeficiente de regularizacao Lambda encontrado e com todas as
 % 60000 amostras de treinamento.
-lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-18 + (melhorResultadoErroQuadratico-1)*0.2);
-W_final = ((H'*H+lambda*eye(501))^-1)*H'*S;
+lambdaErroQuad = 2^((melhorResultadoErroQuadraticoNormal-1-1)*2-18 + (melhorResultadoErroQuadratico-1)*0.2);
+lambdaTaxaAcertos = 2^((melhorResultadoTaxaDeAcertosNormal-1-1)*2-18 + (melhorResultadoTaxaDeAcertos-1)*0.2);
+W_final = ((H'*H+lambdaTaxaAcertos*eye(501))^-1)*H'*S;
 
-% dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
-% 
-% fileID = fopen('p175480.txt','w');
-% fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
-% fclose(fileID);
 
 fileID = fopen('Q2_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-18 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fprintf(fileID, 'ErroQuad: %30.26f\nTaxaAcertos: %30.26f\n', lambdaErroQuad, lambdaTaxaAcertos);
 fclose(fileID);
-
-% semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
-% 
-% title('2-D Line Plot')
-% xlabel('x')
-% ylabel('cos(5x)')
 
 
 

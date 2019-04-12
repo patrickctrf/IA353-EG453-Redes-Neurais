@@ -272,17 +272,18 @@ end
 % Calculando a matriz de classificadores W definitiva, agora apenas com o
 % melhor coeficiente de regularizacao Lambda encontrado e com todas as
 % 60000 amostras de treinamento.
-lambda = 2^((melhorResultadoErroQuadraticoNormal-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
-W_final = ((X'*X+lambda*eye(785))^-1)*X'*S;
+lambdaErroQuad = 2^((melhorResultadoErroQuadraticoNormal-1-1)*2-14 + (melhorResultadoErroQuadratico-1)*0.2);
+lambdaTaxaAcertos = 2^((melhorResultadoTaxaDeAcertosNormal-1-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2);
+W_final = ((X'*X+lambdaTaxaAcertos*eye(785))^-1)*X'*S;
 
-dlmwrite('n175480.txt', W_final, 'precision','%19.15f');
+dlmwrite('n175480.txt', W_final, 'precision','%30.26f');
 
 fileID = fopen('p175480.txt','w');
-fprintf(fileID, '%f\n', lambdasNormais(melhorResultadoErroQuadratico));
+fprintf(fileID, '%f\n', lambdaTaxaAcertos);
 fclose(fileID);
 
 fileID = fopen('Q1_175480.txt','w');
-fprintf(fileID, '%f\n%f\n', lambda, 2^((melhorResultadoTaxaDeAcertosNormal-1)*2-14 + (melhorResultadoTaxaDeAcertos-1)*0.2));% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
+fprintf(fileID, 'ErroQuad: %30.26f\nTaxaAcertos: %30.26f\n', lambdaErroQuad, lambdaTaxaAcertos);% lambdasNormais(melhorResultadoErroQuadraticoNormal), lambdasNormais(melhorResultadoTaxaDeAcertosNormal));
 fclose(fileID);
 
 % semilogx(lambdasRefinados, erroQuadratico, lambdasRefinados, taxaDeAcertos*5*10^7);
