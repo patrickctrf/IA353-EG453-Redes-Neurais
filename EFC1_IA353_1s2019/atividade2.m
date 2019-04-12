@@ -8,6 +8,8 @@
 % Saida = HxW
 
 clear all;
+close all;
+clc;
 
 % Carrega as matrizes X e S (Y, no roteiro) de entrada.
 load('data.mat');

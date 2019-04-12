@@ -1,4 +1,6 @@
 clear all;
+close all;
+clc;
 
 % Carrega as matrizes X e S (Y, no roteiro) de entrada.
 load('data.mat');
@@ -331,8 +333,9 @@ for i = 1:10
             classificadoresVisuais(k,j,i) = W_final(k+(j-1)*28+1, i);
         end
     end
-    figure(i+4);
+    fig = figure(i+4);
     pcolor(1:28,1:28,classificadoresVisuais(:,:,i));
     colorbar;
     title(num2str(i));
+    saveas(fig, strcat('calor',num2str(i)), 'jpeg');
 end

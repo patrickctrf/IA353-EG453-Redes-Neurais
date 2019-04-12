@@ -332,7 +332,7 @@ for i = 1:10
         end
     end
     figure(i+4);
-    pcolor(1:28,1:28,classificadoresVisuais(:,:);
+    pcolor(1:28,1:28,classificadoresVisuais(:,:,i));
     colorbar;
     title(num2str(i));
 end
