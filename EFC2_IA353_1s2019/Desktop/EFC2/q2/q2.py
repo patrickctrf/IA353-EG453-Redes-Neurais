@@ -18,14 +18,14 @@ def thread1Camadas(camadas):
 	somaDasEficienciasDeCadaIteracao = 0
 	
 	# Os valores que utilizaremos para dropout variarao de 10% a 90% (instrucao abaixo).
-	valoresDropout = range(10, 60, 10)# Variaremos de 10% em 10%.
+	valoresDropout = range(10, 40, 10)# Variaremos de 10% em 10%.
 	valoresDropout = [i/100 for i in valoresDropout]# Converte de porcentagem para escala de 0 a 1.
 	
 	# Testando resultados com diferentes quantidades de epocas.
 	for epocas in [4, 8]:
 	
 		# Testando resultados com diferentes quantidades de filtros.
-		for filtros in [64, 128]:
+		for filtros in [32, 64]:
 		
 			# So para indicar em que passo da execucao estamos.
 			print("\n\nepocas: " + str(epocas) + "\nCAMADAS" + str(camadas) + ": " + str(filtros) + "\n\n")
@@ -35,7 +35,7 @@ def thread1Camadas(camadas):
 			for taxaDropout in valoresDropout:
 			
 				# Repetimos o treinamento algumas vezes para tirar uma media da eficiencia
-				for iteracaoMedia in range(1,4):
+				for iteracaoMedia in range(1,3):
 					mnist = tf.keras.datasets.mnist
 					(x_train, y_train),(x_test, y_test) = mnist.load_data()
 					# reshape to be [samples][width][height][pixels]
