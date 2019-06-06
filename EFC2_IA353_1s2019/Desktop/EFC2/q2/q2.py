@@ -105,7 +105,7 @@ def thread2Camadas(camadas):
 			for taxaDropout in valoresDropout:
 			
 				# Repetimos o treinamento algumas vezes para tirar uma media da eficiencia
-				for iteracaoMedia in range(1,4):
+				for iteracaoMedia in range(1,3):
 					mnist = tf.keras.datasets.mnist
 					(x_train, y_train),(x_test, y_test) = mnist.load_data()
 					# reshape to be [samples][width][height][pixels]
@@ -176,7 +176,7 @@ def thread3Camadas(camadas):
 			for taxaDropout in valoresDropout:
 			
 				# Repetimos o treinamento algumas vezes para tirar uma media da eficiencia
-				for iteracaoMedia in range(1,4):
+				for iteracaoMedia in range(1,3):
 					mnist = tf.keras.datasets.mnist
 					(x_train, y_train),(x_test, y_test) = mnist.load_data()
 					# reshape to be [samples][width][height][pixels]
@@ -246,7 +246,7 @@ def thread4Camadas(camadas):
 			for taxaDropout in valoresDropout:
 			
 				# Repetimos o treinamento algumas vezes para tirar uma media da eficiencia
-				for iteracaoMedia in range(1,4):
+				for iteracaoMedia in range(1,3):
 					mnist = tf.keras.datasets.mnist
 					(x_train, y_train),(x_test, y_test) = mnist.load_data()
 					# reshape to be [samples][width][height][pixels]
