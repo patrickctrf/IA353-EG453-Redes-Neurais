@@ -22,7 +22,7 @@ def thread1Camadas(camadas):
 	valoresDropout = [i/100 for i in valoresDropout]# Converte de porcentagem para escala de 0 a 1.
 	
 	# Testando resultados com diferentes quantidades de epocas.
-	for epocas in [4, 8]:
+	for epocas in [2, 6]:
 	
 		# Testando resultados com diferentes quantidades de filtros.
 		for filtros in [32, 64]:
