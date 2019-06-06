@@ -88,14 +88,14 @@ def thread2Camadas(camadas):
 	somaDasEficienciasDeCadaIteracao = 0
 	
 	# Os valores que utilizaremos para dropout variarao de 10% a 90% (instrucao abaixo).
-	valoresDropout = range(10, 60, 10)# Variaremos de 10% em 10%.
+	valoresDropout = range(10, 40, 10)# Variaremos de 10% em 10%.
 	valoresDropout = [i/100 for i in valoresDropout]# Converte de porcentagem para escala de 0 a 1.
 	
 	# Testando resultados com diferentes quantidades de epocas.
-	for epocas in [4, 8]:
+	for epocas in [2, 6]:
 	
 		# Testando resultados com diferentes quantidades de filtros.
-		for filtros in  [64, 128]:
+		for filtros in [32, 64]:
 		
 			# So para indicar em que passo da execucao estamos.
 			print("\n\nepocas: " + str(epocas) + "\nCAMADAS" + str(camadas) + ": " + str(filtros) + "\n\n")
@@ -159,14 +159,14 @@ def thread3Camadas(camadas):
 	somaDasEficienciasDeCadaIteracao = 0
 	
 	# Os valores que utilizaremos para dropout variarao de 10% a 90% (instrucao abaixo).
-	valoresDropout = range(10, 60, 10)# Variaremos de 10% em 10%.
+	valoresDropout = range(10, 40, 10)# Variaremos de 10% em 10%.
 	valoresDropout = [i/100 for i in valoresDropout]# Converte de porcentagem para escala de 0 a 1.
 	
 	# Testando resultados com diferentes quantidades de epocas.
-	for epocas in [4, 8]:
+	for epocas in [2, 6]:
 	
 		# Testando resultados com diferentes quantidades de filtros.
-		for filtros in  [64, 128]:
+		for filtros in [32, 64]:
 		
 			# So para indicar em que passo da execucao estamos.
 			print("\n\nepocas: " + str(epocas) + "\nCAMADAS" + str(camadas) + ": " + str(filtros) + "\n\n")
@@ -229,14 +229,14 @@ def thread4Camadas(camadas):
 	somaDasEficienciasDeCadaIteracao = 0
 	
 	# Os valores que utilizaremos para dropout variarao de 10% a 90% (instrucao abaixo).
-	valoresDropout = range(10, 60, 10)# Variaremos de 10% em 10%.
+	valoresDropout = range(10, 40, 10)# Variaremos de 10% em 10%.
 	valoresDropout = [i/100 for i in valoresDropout]# Converte de porcentagem para escala de 0 a 1.
 	
 	# Testando resultados com diferentes quantidades de epocas.
-	for epocas in [4, 8]:
+	for epocas in [2, 6]:
 	
 		# Testando resultados com diferentes quantidades de filtros.
-		for filtros in  [64, 128]:
+		for filtros in [32, 64]:
 		
 			# So para indicar em que passo da execucao estamos.
 			print("\n\nepocas: " + str(epocas) + "\nCAMADAS" + str(camadas) + ": " + str(filtros) + "\n\n")
