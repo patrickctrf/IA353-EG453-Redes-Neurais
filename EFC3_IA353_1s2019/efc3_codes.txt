@@ -1,0 +1,86 @@
+Questao 1:
+----------
+import keras
+
+mnist = keras.datasets.mnist
+(x_train, y_train),(x_test, y_test) = mnist.load_data()
+x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
+x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+model = keras.models.Sequential()
+model.add(keras.layers.Conv2D(32, kernel_size=(3, 3),
+ activation='relu',input_shape=(28, 28, 1)))
+model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(keras.layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(keras.layers.Dropout(0.25))
+model.add(keras.layers.Flatten())
+model.add(keras.layers.Dense(128, activation='relu'))
+model.add(keras.layers.Dropout(0.5))
+model.add(keras.layers.Dense(10, activation='softmax'))
+
+model.get_config()
+
+model.compile(optimizer='adam',
+ loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=5)
+evaluation = model.evaluate(x_test, y_test)
+
+model.save('mnist_model.h5')
+\end{lstlisting}
+\end{framed}
+
+
+Questao 1a:
+-----------
+import keras
+import innvestigate
+import matplotlib.pyplot as plot
+
+mnist = keras.datasets.mnist
+(x_train, y_train),(x_test, y_test) = mnist.load_data()
+x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
+x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+model = keras.models.load_model('mnist_model.h5')
+model_wo_sm = innvestigate.utils.keras.graph.model_wo_softmax(model)
+
+imagem = x_test[0:1]
+plot.imshow(imagem.squeeze(), cmap='gray', interpolation='nearest')
+
+analyzer = innvestigate.analyzer.LRPEpsilon(model=model_wo_sm,
+ epsilon=1)
+analysis = analyzer.analyze(imagem)
+plot.imshow(analysis.squeeze(), cmap='seismic',
+ interpolation='nearest')
+
+Questao 1b:
+-----------
+import keras
+from vis.visualization import visualize_activation
+from vis.utils import utils
+import matplotlib.pyplot as plot
+
+model = keras.models.load_model('mnist_model.h5')
+layer_idx = utils.find_layer_idx(model, 'dense_2')
+model.layers[layer_idx].activation = keras.activations.linear
+model = utils.apply_modifications(model)
+
+filter_idx = 9
+img = visualize_activation(model, layer_idx,
+ filter_indices=filter_idx, input_range=(0., 1.), verbose=True,
+ max_iter=1000, tv_weight=1., lp_norm_weight=0.)
+plot.imshow(img.squeeze(), cmap='seismic', interpolation='nearest')
+
+Questao 4:
+----------
+from textgenrnn import textgenrnn
+
+file_path = "domcasmurro.txt"
+textgen.reset()
+textgen.train_from_file(file_path, new_model=True, num_epochs=20,
+ gen_epochs=10, word_level=True)
+textgen.generate(interactive=True, top_n=5)
+textgen.save('domcasmurro.hdf5')
+
