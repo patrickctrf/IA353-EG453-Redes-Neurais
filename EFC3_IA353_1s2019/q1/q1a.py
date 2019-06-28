@@ -1,7 +1,14 @@
 import keras
 import innvestigate
 import matplotlib.pyplot as plot
+import matplotlib
 import tensorflow as tf
+
+
+
+# Comandos para exibir imagem no jupyter
+%matplotlib inline
+%config InlineBackend.figure_format = 'retina'
 
 mnist = keras.datasets.mnist
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -66,6 +73,11 @@ while i<6:
     
     
     i = i + 1;
-    
-    
+
+
+# ajustando tamanho de exibição
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18, 18)
+# fig.savefig('test2png.png', dpi=100, forward=True)
+
 plot.show() 

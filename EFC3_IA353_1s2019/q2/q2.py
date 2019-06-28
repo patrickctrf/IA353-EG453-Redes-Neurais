@@ -154,9 +154,19 @@ class GAN():
                 axs[i,j].axis('off')
                 cnt += 1
         fig.savefig("images/%d.png" % epoch)
+        fig.title("images/%d.png" % epoch)
+        fig.show()
         plt.close()
 
 
 if __name__ == '__main__':
     gan = GAN()
     gan.train(epochs=30000, batch_size=32, sample_interval=200)
+    
+    
+    
+    
+    
+    
+    
+    

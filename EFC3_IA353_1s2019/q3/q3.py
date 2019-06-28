@@ -153,6 +153,8 @@ for i in range(64):
     
     
 show(decoder.predict(pt).reshape((28, 28)))
+ 
+
     
 
 
